@@ -4,10 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Upload executable to FVP",
+            "label": "Build",
             "type": "shell",
-            "command": "make upload",
-            "group": "build",
+            "command": "make lab",
             "problemMatcher": [
                 {
                     "owner": "cpp",
@@ -26,16 +25,15 @@
             ]
         },
         {
-            "label": "Start GDBServer on FVP",
+            "label": "Run",
             "type": "shell",
-            "command": "make gdbserver",
+            "command": "make run",
+            "dependsOn": ["Build"],
         },
-        // Has to sleep to 3 seconds for the gdbserver on FVP
-        // to boot up
         {
-            "label": "Debug Console",
+            "label": "Debug session",
             "type": "shell",
-            "command": "make gdbserver",
+            "command": "make debug",
             // This task is run before some debug tasks.
             // Problem is, it's a watch script, and since it never exits, VSCode
             // complains. All this is needed so VSCode just lets it run.
@@ -51,8 +49,8 @@
                     ],
                     "background": {
                         "activeOnStart": true,
-                        "beginsPattern": "Process lab created; pid = [0-9]+",
-                        "endsPattern": "Listening on port 1234",
+                        "beginsPattern": "Debug session started",
+                        "endsPattern": "Waiting for gdb connection on port [0-9]+",
                     }
                 }
             ],
@@ -68,7 +66,7 @@
         },
         {
             "label": "Debug Prep",
-            "dependsOn": ["Upload executable to FVP", "Debug Console"],
+            "dependsOn": ["Build", "Debug session"],
             "dependsOrder": "sequence"
         }
     ]
