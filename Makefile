@@ -25,7 +25,7 @@ debug: lab port kill
 
 # Kill qemu, ignore if none is presented
 kill:
-	@killall -s KILL qemu-riscv32-static -q || :
+	@killall -s KILL qemu-riscv32-static -u $USER -q || :
 
 # Obtain an unused port
 port:
