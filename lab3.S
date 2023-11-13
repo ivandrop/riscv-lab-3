@@ -3,11 +3,11 @@
 
 .global login_name
 login_name:
-    .asciz "please put your Purdue login name here"
+    .asciz "iandreop"
 
 .global puid
 puid:
-    .asciz "please put your 10-digit PUID here"
+    .asciz "0033426341"
 
 .balign 4
 
