@@ -23,7 +23,7 @@ puid:
 //      will test on the sort and strconcat
 .global test
 test:
-    .word TEST_BSEARCH
+    .word TEST_ALL
 
 
 // Align to 4bytes boundary as we have a string above
@@ -170,11 +170,11 @@ asm_fib:
     jal x1, asm_fib
 
     // Return (Fn - 1) + (Fn - 2)
-    lw x29, 8(sp)
+    lw x29, 8(x2)
     add x10, x10, x29
 
     // Load Stack Arguments
-    lw x1, 0(sp)
+    lw x1, 0(x2)
     addi x2, x2, 32
     ret
 
@@ -203,7 +203,65 @@ asm_bsearch:
 
     /* Enter your code after this comment */
 
+    // Move Arguments to Stack
+    addi x2, x2, -32
+    sw x1, 0(x2)
+    sw x10, 4(x2)
+    sw x11, 8(x2)
+    sw x12, 12(x2)
+    sw x13, 16(x2)
 
+    // Base Case: start > end
+    bgt x12, x13, _case_3
+
+    // Determine Middle Value
+    add x6, x13, x12  // end + star
+    srai x6, x6, 1 // (end + start) / 2 = mid
+    sw x6, 20(x2)
+
+    slli x7, x6, 2
+    add x7, x10, x7  // arr + mid
+    lw x28, 0(x7)  // arr[mid]
+    sw x28, 24(x2)  // store
+
+    // Comparisons
+    blt x28, x11, _case_10
+    blt x11, x28, _case_2
+    
+    // Return Mid
+    lw x10, 20(x2)
+    lw x1, 0(x2)
+    addi x2, x2, 32
+    ret
+
+    _case_10:
+        lw x10, 4(x2)  // arr
+        lw x11, 8(x2)  // key
+        lw x12, 20(x2)  // mid
+        addi x12, x12, 1  // mid + 1
+        lw x13, 16(x2)  // end
+        jal x1, asm_bsearch
+        lw x1, 0(x2)
+        addi x2, x2, 32
+        ret
+
+    _case_2:
+        lw x10, 4(x2)  // arr
+        lw x11, 8(x2)  // key
+        lw x12, 12(x2)  // start
+        lw x13, 20(x2)  // mid
+        addi x13, x13, -1  // mid - 1
+        jal x1, asm_bsearch
+        lw x1, 0(x2)
+        addi x2, x2, 32
+        ret
+
+    // Base Case
+    _case_3:
+        li x10, -1
+        lw x1, 0(x2)
+        addi x2, x2, 32
+        ret
 
     /* Enter your code above this comment */
     ret
